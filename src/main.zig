@@ -10,23 +10,15 @@ pub fn main() !void {
     }
 
     const stdout = std.io.getStdOut();
-    const raw_writer = stdout.writer();
-    var buffered_writer = std.io.bufferedWriter(raw_writer);
+    var buffered_writer = std.io.bufferedWriter(stdout.writer());
     const writer = buffered_writer.writer();
     defer buffered_writer.flush() catch {};
 
     const vpk_path = std.os.argv[1];
-    const file = try std.fs.cwd().openFile(std.mem.span(vpk_path), .{});
-    defer file.close();
+    var vpk_file = try vpk.File.open(std.mem.span(vpk_path));
 
-    const raw_reader = file.reader();
-    var buffered_reader = std.io.bufferedReader(raw_reader);
-    const reader = buffered_reader.reader();
-
-    _ = try vpk.Header.read(reader);
-
-    var iter = vpk.Iterator{};
-    while (try iter.next(reader)) |entry| {
+    var iter = try vpk_file.iterate();
+    while (try iter.next()) |entry| {
         try entry.path_components.joinIntoPath(writer);
         try writer.print("\n", .{});
     }

@@ -4,4 +4,5 @@
 pub const Header = @import("vpk/Header.zig");
 pub const DirectoryEntryMetadata = @import("vpk/DirectoryEntryMetadata.zig");
 pub const PathComponents = @import("vpk/PathComponents.zig");
-pub const Iterator = @import("vpk/Iterator.zig");
+pub const File = @import("vpk/File.zig");
+pub const Iterator = @import("vpk/iterator.zig").Iterator;

@@ -3,7 +3,7 @@ const Header = @This();
 /// Magic number
 pub const magic: u32 = 0x55aa1234;
 
-/// Only versions 1 and 2 are supported
+/// Versions 1 and 2 are supported
 version: u32,
 /// Size of the directory tree in bytes
 ///
@@ -28,6 +28,14 @@ other_md5_section_size: u32 = 0,
 ///
 /// Versions: 2
 signature_section_size: u32 = 0,
+
+pub fn size(self: Header) usize {
+    return switch (self.version) {
+        1 => 8,
+        2 => 24,
+        else => unreachable, // unsupported version
+    };
+}
 
 pub fn read(reader: anytype) !Header {
     const signature = try reader.readIntLittle(u32);
@@ -56,12 +64,12 @@ pub fn write(writer: anytype, header: Header) !void {
     try writer.writeIntLittle(u32, header.version);
 
     try writer.writeIntLittle(u32, header.tree_size);
-    
+
     // Version 2 exclusive fields
     if (header.version == 2) {
-        try writer.writeIntLittle(u32, header.file_data_section_size);        
-        try writer.writeIntLittle(u32, header.archive_md5_section_size);        
-        try writer.writeIntLittle(u32, header.other_md5_section_size);        
-        try writer.writeIntLittle(u32, header.signature_section_size);        
+        try writer.writeIntLittle(u32, header.file_data_section_size);
+        try writer.writeIntLittle(u32, header.archive_md5_section_size);
+        try writer.writeIntLittle(u32, header.other_md5_section_size);
+        try writer.writeIntLittle(u32, header.signature_section_size);
     }
 }

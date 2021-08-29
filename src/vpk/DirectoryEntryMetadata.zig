@@ -39,5 +39,5 @@ pub fn write(self: DirectoryEntryMetadata, writer: anytype) !void {
     try writer.writeIntLittle(u16, self.archive_index);
     try writer.writeIntLittle(u32, self.offset);
     try writer.writeIntLittle(u32, self.length);
-    try writer.writeIntLittle(u16, terminator);    
+    try writer.writeIntLittle(u16, terminator);
 }
