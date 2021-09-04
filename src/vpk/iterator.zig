@@ -9,14 +9,15 @@ pub const DirectoryEntry = struct {
 
 pub fn Iterator(comptime ReaderType: type) type {
     return struct {
+        buffered_reader: std.io.BufferedReader(4096, ReaderType),
+        skip_preload_data: bool = true,
         extension_len: usize = 0,
         path_len: usize = 0,
         extension_buf: [8]u8 = undefined,
         path_buf: [2048]u8 = undefined,
         filename_buf: [512]u8 = undefined,
         state: State = .extension,
-        buffered_reader: std.io.BufferedReader(4096, ReaderType),
-        
+
         const Self = @This();
 
         pub fn init(reader: ReaderType) Self {
@@ -81,18 +82,14 @@ pub fn Iterator(comptime ReaderType: type) type {
                 }
             }
 
-            if (extension) |str| {
-                if (std.mem.eql(u8, str, " ")) extension = null;
-            }
-            if (path) |str| {
-                if (std.mem.eql(u8, str, " ")) path = null;
-            }
-            if (filename) |str| {
-                if (std.mem.eql(u8, str, " ")) filename = null;
-            }
+            if (std.mem.eql(u8, extension.?, " ")) extension = null;
+            if (std.mem.eql(u8, path.?, " ")) path = null;
+            if (std.mem.eql(u8, filename.?, " ")) filename = null;
 
             const metadata = try DirectoryEntryMetadata.read(reader);
-            if (metadata.preload_bytes > 0) try reader.skipBytes(metadata.preload_bytes, .{});
+            if (self.skip_preload_data and metadata.preload_bytes > 0) {
+                try reader.skipBytes(metadata.preload_bytes, .{});
+            }
 
             return DirectoryEntry{
                 .path_components = .{

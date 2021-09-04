@@ -3,6 +3,8 @@
 const std = @import("std");
 const Header = @import("Header.zig");
 const Iterator = @import("iterator.zig").Iterator;
+const DirectoryEntryMetadata = @import("DirectoryEntryMetadata.zig");
+const PathComponents = @import("PathComponents.zig");
 const File = @This();
 
 path: []const u8,

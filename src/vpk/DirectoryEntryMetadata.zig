@@ -13,6 +13,10 @@ offset: u32,
 /// Size of the file content in bytes
 length: u32,
 
+/// Size of the serialized directory entry metadata in bytes (without
+/// preload data)
+pub const size = 16;
+
 pub fn read(reader: anytype) !DirectoryEntryMetadata {
     const crc_hash = try reader.readIntLittle(u32);
     const preload_bytes = try reader.readIntLittle(u16);
