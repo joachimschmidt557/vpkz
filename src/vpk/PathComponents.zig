@@ -7,6 +7,11 @@ extension: ?[]const u8,
 
 pub fn joinIntoPath(self: PathComponents, writer: anytype) !void {
     if (self.path) |path| try writer.print("{s}/", .{path});
+    try self.joinIntoFilename(writer);
+}
+
+/// Like joinIntoPath, but just writes the file name
+pub fn joinIntoFilename(self: PathComponents, writer: anytype) !void {
     if (self.filename) |filename| try writer.writeAll(filename);
     if (self.extension) |extension| try writer.print(".{s}", .{extension});
 }

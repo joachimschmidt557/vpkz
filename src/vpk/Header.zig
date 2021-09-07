@@ -31,8 +31,8 @@ signature_section_size: u32 = 0,
 
 pub fn size(self: Header) usize {
     return switch (self.version) {
-        1 => 8,
-        2 => 24,
+        1 => 4 + 8, // magic number + fields
+        2 => 4 + 24,
         else => unreachable, // unsupported version
     };
 }

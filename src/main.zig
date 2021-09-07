@@ -9,17 +9,18 @@ pub fn main() !void {
         std.os.exit(1);
     }
 
-    const stdout = std.io.getStdOut();
-    var buffered_writer = std.io.bufferedWriter(stdout.writer());
-    const writer = buffered_writer.writer();
-    defer buffered_writer.flush() catch {};
+    // const stdout = std.io.getStdOut();
+    // var buffered_writer = std.io.bufferedWriter(stdout.writer());
+    // const writer = buffered_writer.writer();
+    // defer buffered_writer.flush() catch {};
 
     const vpk_path = std.os.argv[1];
     var vpk_file = try vpk.File.open(std.mem.span(vpk_path));
 
-    var iter = try vpk_file.iterate();
-    while (try iter.next()) |entry| {
-        try entry.path_components.joinIntoPath(writer);
-        try writer.print("\n", .{});
-    }
+    try vpk_file.extractAll(std.fs.cwd());
+    // var iter = try vpk_file.iterate();
+    // while (try iter.next()) |entry| {
+    //     try entry.path_components.joinIntoPath(writer);
+    //     try writer.print("\n", .{});
+    // }
 }
