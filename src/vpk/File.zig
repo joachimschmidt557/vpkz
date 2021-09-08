@@ -91,7 +91,6 @@ pub fn extractAll(self: *File, output: std.fs.Dir) !void {
 
         const file = try dir.createFile(filename_buf_writer.getWritten(), .{});
         defer file.close();
-        var buffered_writer = std.io.bufferedWriter(file.writer());
 
         // Write file data
         const buf_size = 4096;
@@ -119,17 +118,14 @@ pub fn extractAll(self: *File, output: std.fs.Dir) !void {
             }
 
             try current_external_archive.seekTo(metadata.offset);
-            var buffered_reader = std.io.bufferedReader(current_external_archive.reader());
 
             var remaining = metadata.length;
             while (remaining > 0) {
                 const amt = std.math.min(remaining, buf_size);
-                try buffered_reader.reader().readNoEof(buf[0..amt]);
-                try buffered_writer.writer().writeAll(buf[0..amt]);
+                try current_external_archive.reader().readNoEof(buf[0..amt]);
+                try file.writer().writeAll(buf[0..amt]);
                 remaining -= amt;
             }
         }
-
-        try buffered_writer.flush();
     }
 }
