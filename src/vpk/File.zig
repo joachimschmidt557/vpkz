@@ -102,7 +102,18 @@ pub fn extractAll(self: *File, output: std.fs.Dir) !void {
 
         if (metadata.archive_index == 0x7fff) {
             // File contents are internally in this VPK file
-            @panic("TODO write internal file contents");
+            const pos = try self.file.getPos();
+            try self.file.seekTo(self.header.size() + self.header.tree_size + metadata.offset);
+
+            var remaining = metadata.length;
+            while (remaining > 0) {
+                const amt = std.math.min(remaining, buf_size);
+                try self.file.reader().readNoEof(buf[0..amt]);
+                try file.writer().writeAll(buf[0..amt]);
+                remaining -= amt;
+            }
+
+            try self.file.seekTo(pos);
         } else {
             // File contents are externally in another VPK file
             if (current_archive_index != metadata.archive_index) {
