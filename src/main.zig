@@ -5,7 +5,7 @@ const log = std.log.scoped(.vpkar);
 
 pub fn main() !void {
     if (std.os.argv.len < 2) {
-        log.crit("No vpk file supplied", .{});
+        log.err("No vpk file supplied", .{});
         std.os.exit(1);
     }
 
