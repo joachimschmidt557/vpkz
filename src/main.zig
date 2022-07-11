@@ -4,7 +4,14 @@ const vpk = @import("vpk.zig");
 const log = std.log.scoped(.vpkar);
 
 pub fn main() !void {
-    if (std.os.argv.len < 2) {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    const args = try std.process.argsAlloc(allocator);
+    defer std.process.argsFree(allocator, args);
+
+    if (args.len < 2) {
         log.err("No vpk file supplied", .{});
         std.os.exit(1);
     }
@@ -14,7 +21,7 @@ pub fn main() !void {
     // const writer = buffered_writer.writer();
     // defer buffered_writer.flush() catch {};
 
-    const vpk_path = std.os.argv[1];
+    const vpk_path = args[1];
     var vpk_file = try vpk.File.open(std.mem.span(vpk_path));
 
     try vpk_file.extractAll(std.fs.cwd());

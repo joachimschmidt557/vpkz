@@ -3,6 +3,7 @@
 const std = @import("std");
 const Header = @import("Header.zig");
 const Iterator = @import("iterator.zig").Iterator;
+const BufferedIterator = @import("iterator.zig").BufferedIterator;
 const DirectoryEntryMetadata = @import("DirectoryEntryMetadata.zig");
 const PathComponents = @import("PathComponents.zig");
 const File = @This();
@@ -27,6 +28,7 @@ pub fn deinit(self: *File) void {
 }
 
 pub const FileIterator = Iterator(std.fs.File.Reader);
+pub const BufferedFileIterator = BufferedIterator(std.fs.File.Reader);
 
 pub fn iterate(self: *File) !FileIterator {
     try self.file.seekTo(self.header.size());

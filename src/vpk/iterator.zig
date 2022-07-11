@@ -7,9 +7,31 @@ pub const DirectoryEntry = struct {
     metadata: DirectoryEntryMetadata,
 };
 
+pub fn BufferedIterator(comptime ReaderType: type) type {
+    return struct {
+        buffered_reader: BufferedReaderType,
+        iterator: Iterator(BufferedReaderType.Reader),
+
+        const BufferedReaderType = std.io.BufferedReader(4096, ReaderType);
+
+        const Self = @This();
+
+        pub fn init(reader: ReaderType) Self {
+            return .{
+                .buffered_reader = std.io.bufferedReader(reader),
+                .iterator = Iterator(BufferedReaderType.Reader).init(),
+            };
+        }
+
+        pub fn next(self: *Self) !?DirectoryEntry {
+            return try self.iterator.next();
+        }
+    };
+}
+
 pub fn Iterator(comptime ReaderType: type) type {
     return struct {
-        buffered_reader: std.io.BufferedReader(4096, ReaderType),
+        reader: ReaderType,
         skip_preload_data: bool = true,
         extension_len: usize = 0,
         path_len: usize = 0,
@@ -22,7 +44,7 @@ pub fn Iterator(comptime ReaderType: type) type {
 
         pub fn init(reader: ReaderType) Self {
             return .{
-                .buffered_reader = std.io.bufferedReader(reader),
+                .reader = reader,
             };
         }
 
@@ -38,7 +60,7 @@ pub fn Iterator(comptime ReaderType: type) type {
         /// Memory such as file names referenced in this returned entry
         /// becomes invalid with subsequent calls to `next`
         pub fn next(self: *Self) !?DirectoryEntry {
-            const reader = self.buffered_reader.reader();
+            const reader = self.reader;
 
             var extension: ?[]const u8 = self.extension_buf[0..self.extension_len];
             var path: ?[]const u8 = self.path_buf[0..self.path_len];
