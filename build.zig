@@ -1,23 +1,25 @@
-const std = @import("std");
+const Builder = @import("std").build.Builder;
 
-pub fn build(b: *std.build.Builder) void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
+pub fn build(b: *Builder) void {
     const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
 
-    // Standard release options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
-    const mode = b.standardReleaseOptions();
+    const lib_tests = b.addTest(.{
+        .name = "main test suite",
+        .root_source_file = .{ .path = "src/vpk.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
 
-    const lib_tests = b.addTest("src/vpk.zig");
     const test_step = b.step("test", "Run library tests");
     test_step.dependOn(&lib_tests.step);
 
-    const exe = b.addExecutable("vpkar", "src/main.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
+    const exe = b.addExecutable(.{
+        .name = "vpkar",
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
     exe.install();
 
     const run_cmd = exe.run();

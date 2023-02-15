@@ -22,7 +22,7 @@ pub fn main() !void {
     // defer buffered_writer.flush() catch {};
 
     const vpk_path = args[1];
-    var vpk_file = try vpk.File.open(std.mem.span(vpk_path));
+    var vpk_file = try vpk.File.open(vpk_path);
 
     try vpk_file.extractAll(std.fs.cwd());
     // var iter = try vpk_file.iterate();
