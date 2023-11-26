@@ -109,7 +109,7 @@ pub fn extractAll(self: *File, output: std.fs.Dir) !void {
 
             var remaining = metadata.length;
             while (remaining > 0) {
-                const amt = std.math.min(remaining, buf_size);
+                const amt = @min(remaining, buf_size);
                 try self.file.reader().readNoEof(buf[0..amt]);
                 try file.writer().writeAll(buf[0..amt]);
                 remaining -= amt;
@@ -134,7 +134,7 @@ pub fn extractAll(self: *File, output: std.fs.Dir) !void {
 
             var remaining = metadata.length;
             while (remaining > 0) {
-                const amt = std.math.min(remaining, buf_size);
+                const amt = @min(remaining, buf_size);
                 try current_external_archive.reader().readNoEof(buf[0..amt]);
                 try file.writer().writeAll(buf[0..amt]);
                 remaining -= amt;
