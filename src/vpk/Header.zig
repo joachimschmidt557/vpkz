@@ -38,22 +38,22 @@ pub fn size(self: Header) usize {
 }
 
 pub fn read(reader: anytype) !Header {
-    const signature = try reader.readIntLittle(u32);
+    const signature = try reader.readInt(u32, .little);
     if (signature != magic) return error.InvalidSignature;
 
-    const version = try reader.readIntLittle(u32);
+    const version = try reader.readInt(u32, .little);
     switch (version) {
         1 => return Header{
             .version = 1,
-            .tree_size = try reader.readIntLittle(u32),
+            .tree_size = try reader.readInt(u32, .little),
         },
         2 => return Header{
             .version = 2,
-            .tree_size = try reader.readIntLittle(u32),
-            .file_data_section_size = try reader.readIntLittle(u32),
-            .archive_md5_section_size = try reader.readIntLittle(u32),
-            .other_md5_section_size = try reader.readIntLittle(u32),
-            .signature_section_size = try reader.readIntLittle(u32),
+            .tree_size = try reader.readInt(u32, .little),
+            .file_data_section_size = try reader.readInt(u32, .little),
+            .archive_md5_section_size = try reader.readInt(u32, .little),
+            .other_md5_section_size = try reader.readInt(u32, .little),
+            .signature_section_size = try reader.readInt(u32, .little),
         },
         else => return error.UnsupportedVersion,
     }

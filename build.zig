@@ -1,11 +1,11 @@
-const Builder = @import("std").build.Builder;
+const Build = @import("std").Build;
 
-pub fn build(b: *Builder) void {
+pub fn build(b: *Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
     const main_tests = b.addTest(.{
-        .root_source_file = .{ .path = "src/vpk.zig" },
+        .root_source_file = b.path("src/vpk.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -17,7 +17,7 @@ pub fn build(b: *Builder) void {
 
     const vpkar = b.addExecutable(.{
         .name = "vpkar",
-        .root_source_file = .{ .path = "src/main.zig" },
+        .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
     });

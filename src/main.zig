@@ -13,7 +13,7 @@ pub fn main() !void {
 
     if (args.len < 2) {
         log.err("No vpk file supplied", .{});
-        std.os.exit(1);
+        std.process.exit(1);
     }
 
     // const stdout = std.io.getStdOut();

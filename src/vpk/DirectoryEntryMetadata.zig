@@ -18,12 +18,12 @@ length: u32,
 pub const size = 16;
 
 pub fn read(reader: anytype) !DirectoryEntryMetadata {
-    const crc_hash = try reader.readIntLittle(u32);
-    const preload_bytes = try reader.readIntLittle(u16);
-    const archive_index = try reader.readIntLittle(u16);
-    const offset = try reader.readIntLittle(u32);
-    const length = try reader.readIntLittle(u32);
-    const terminator = try reader.readIntLittle(u16);
+    const crc_hash = try reader.readInt(u32, .little);
+    const preload_bytes = try reader.readInt(u16, .little);
+    const archive_index = try reader.readInt(u16, .little);
+    const offset = try reader.readInt(u32, .little);
+    const length = try reader.readInt(u32, .little);
+    const terminator = try reader.readInt(u16, .little);
     if (terminator != 0xffff) return error.InvalidTerminator;
 
     return DirectoryEntryMetadata{
