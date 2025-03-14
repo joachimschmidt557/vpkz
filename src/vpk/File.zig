@@ -16,7 +16,7 @@ pub fn open(path: []const u8) !File {
     const file = try std.fs.cwd().openFile(path, .{});
     const header = try Header.read(file.reader());
 
-    return File{
+    return .{
         .path = path,
         .file = file,
         .header = header,

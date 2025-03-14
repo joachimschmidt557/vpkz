@@ -1,5 +1,5 @@
 const std = @import("std");
-const vpk = @import("vpk.zig");
+const vpk = @import("vpk");
 
 const log = std.log.scoped(.vpkar);
 

@@ -4,11 +4,13 @@ pub fn build(b: *Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const main_tests = b.addTest(.{
+    const module = b.addModule("vpk", .{
         .root_source_file = b.path("src/vpk.zig"),
         .target = target,
         .optimize = optimize,
     });
+
+    const main_tests = b.addTest(.{ .root_module = module });
 
     const run_main_tests = b.addRunArtifact(main_tests);
 
@@ -17,10 +19,13 @@ pub fn build(b: *Build) void {
 
     const vpkar = b.addExecutable(.{
         .name = "vpkar",
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
     });
+    vpkar.root_module.addImport("vpk", module);
     b.installArtifact(vpkar);
 
     const run_cmd = b.addRunArtifact(vpkar);
